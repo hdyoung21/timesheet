@@ -1,61 +1,76 @@
 import React, { useState } from 'react';
 
 const Timesheet = () => {
-  const [weekHours, setWeekHours] = useState([]);
+  const [timeSheet, setTimeSheet] = useState([]);
 
-  const handleInputChange = (day, event) => {
-    const updatedWeekHours = [...weekHours];
-    updatedWeekHours[day] = event.target.value;
-    setWeekHours(updatedWeekHours);
+  const handleInputChange = (employeeIndex, dayIndex, event) => {
+    const updatedTimeSheet = [...timeSheet];
+    updatedTimeSheet[employeeIndex][dayIndex] = event.target.value;
+    setTimeSheet(updatedTimeSheet);
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     // You can add your logic here to save the updated time sheet data
-    console.log(weekHours);
+    console.log(timeSheet);
+  };
+
+  const addEmployee = () => {
+    const updatedTimeSheet = [...timeSheet];
+    updatedTimeSheet.push(new Array(7).fill(''));
+    setTimeSheet(updatedTimeSheet);
+  };
+
+  const removeEmployee = (employeeIndex) => {
+    const updatedTimeSheet = [...timeSheet];
+    updatedTimeSheet.splice(employeeIndex, 1);
+    setTimeSheet(updatedTimeSheet);
   };
 
   return (
     <div>
       <h1>Time Sheet</h1>
-      <form onSubmit={handleSubmit}>
-        <label>Monday:</label>
-        <input
-          type="text"
-          value={weekHours[0] || ''}
-          onChange={(event) => handleInputChange(0, event)}
-        />
-        <br />
-        <label>Tuesday:</label>
-        <input
-          type="text"
-          value={weekHours[1] || ''}
-          onChange={(event) => handleInputChange(1, event)}
-        />
-        <br />
-        <label>Wednesday:</label>
-        <input
-          type="text"
-          value={weekHours[2] || ''}
-          onChange={(event) => handleInputChange(2, event)}
-        />
-        <br />
-        <label>Thursday:</label>
-        <input
-          type="text"
-          value={weekHours[3] || ''}
-          onChange={(event) => handleInputChange(3, event)}
-        />
-        <br />
-        <label>Friday:</label>
-        <input
-          type="text"
-          value={weekHours[4] || ''}
-          onChange={(event) => handleInputChange(4, event)}
-        />
-        <br />
-        <button type="submit">Submit</button>
-      </form>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Saturday</th>
+            <th>Sunday</th>
+          </tr>
+        </thead>
+        <tbody>
+          {timeSheet.map((employee, employeeIndex) => (
+            <tr key={employeeIndex}>
+              <td>
+                <button onClick={() => removeEmployee(employeeIndex)}>
+                  Remove
+                </button>
+              </td>
+              {employee.map((hours, dayIndex) => (
+                <td key={dayIndex}>
+                  <input
+                    type="text"
+                    value={hours}
+                    onChange={(event) =>
+                      handleInputChange(employeeIndex, dayIndex, event)
+                    }
+                  />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <button onClick={addEmployee}>Add Employee</button>
+      <br />
+      <button type="submit" onClick={handleSubmit}>
+        Submit
+      </button>
     </div>
   );
 };
